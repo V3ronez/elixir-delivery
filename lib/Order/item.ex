@@ -7,13 +7,8 @@ defmodule Delivery.Order.Item do
 
   def build(description, category, unity_price, quantity)
       when unity_price > 0 and quantity > 0 and category in @categories do
-    {:ok,
-     %__MODULE__{
-       description: description,
-       category: category,
-       unity_price: unity_price,
-       quantity: quantity
-     }}
+    Decimal.cast(unity_price)
+    |> build_item(description, category, quantity)
   end
 
   def build(_description, category, _unity_price, _quantity)
@@ -25,4 +20,21 @@ defmodule Delivery.Order.Item do
   def build(_description, _category, _unity_price, _quantity) do
     {:error, "Error to create a new item."}
   end
+
+  defp build_item(
+         {:ok, unity_price},
+         description,
+         category,
+         quantity
+       ) do
+    {:ok,
+     %__MODULE__{
+       description: description,
+       category: category,
+       unity_price: unity_price,
+       quantity: quantity
+     }}
+  end
+
+  defp build_item(:error, _description, _category, _quantity), do: {:error, "Invalid price!"}
 end

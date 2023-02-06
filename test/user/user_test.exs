@@ -2,16 +2,19 @@ defmodule Delivery.User.UserTest do
   use ExUnit.Case
   alias Delivery.User.User
 
+  import Delivery.Factory
+
   describe "build/5" do
     test "create a new user" do
-      response =
-        User.build(
-          "Henrique",
-          "henrique@gmail.com",
-          "123456789",
-          "rua banana",
-          25
-        )
+      # response =
+      #   User.build(
+      #     "Henrique",
+      #     "henrique@gmail.com",
+      #     "123456789",
+      #     "rua banana",
+      #     25
+      #   )
+      response = {:ok, build(:user)}
 
       expected_response =
         {:ok,
@@ -36,8 +39,7 @@ defmodule Delivery.User.UserTest do
           5
         )
 
-      expected_response =
-        {:error, "Invalid parameters"}
+      expected_response = {:error, "Invalid parameters"}
 
       assert response == expected_response
     end

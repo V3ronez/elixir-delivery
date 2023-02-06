@@ -1,17 +1,30 @@
 defmodule Delivery.Order.Order do
-  @keys [:user_cpf, :delivery_address, :items, :quantity]
+  alias Delivery.Order.Item
+  alias Delivery.User.User
+
+  @keys [:user_cpf, :delivery_address, :items, :total_price]
   @enforce_keys @keys
   defstruct @keys
 
-  def build(user_cpf, delivery_address, items, quantity) do
+  def build(%User{cpf: cpf, address: address}, [%Item{} | _item] = items) do
     {:ok,
      %__MODULE__{
-       user_cpf: user_cpf,
-       delivery_address: delivery_address,
+       user_cpf: cpf,
+       delivery_address: address,
        items: items,
-       quantity: quantity
+       total_price: calculate_total(items)
      }}
   end
 
-  # def build(_user_cpf, _delivery_address, _items, _quantity), do: {:error, "invalid parameters"}
+  def build(_user_cpf, _delivery_address, _items), do: {:error, "invalid parameters"}
+
+  defp calculate_total(items) do
+    Enum.reduce(items, Decimal.new("0.00"), &sum_prices_item(&1, &2))
+  end
+
+  defp sum_prices_item(%Item{unity_price: price, quantity: quantity}, accumulator) do
+    price
+    |> Decimal.mult(quantity)
+    |> Decimal.add(accumulator)
+  end
 end

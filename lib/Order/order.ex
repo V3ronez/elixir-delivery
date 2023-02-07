@@ -7,6 +7,7 @@ defmodule Delivery.Order.Order do
   defstruct @keys
 
   def build(%User{cpf: cpf, address: address}, [%Item{} | _item] = items) do
+    # if second parameter is != %Item will crash de application, fix this before
     {:ok,
      %__MODULE__{
        user_cpf: cpf,
@@ -16,7 +17,7 @@ defmodule Delivery.Order.Order do
      }}
   end
 
-  def build(_user_cpf, _delivery_address, _items), do: {:error, "invalid parameters"}
+  def build(_user, _items), do: {:error, "invalid parameters"}
 
   defp calculate_total(items) do
     Enum.reduce(items, Decimal.new("0.00"), &sum_prices_item(&1, &2))

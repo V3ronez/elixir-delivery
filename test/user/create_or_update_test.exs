@@ -19,7 +19,7 @@ defmodule Delivery.User.CreateOrUpdateTest do
       {:ok, user: user}
     end
 
-    test "save new user in a agent", %{user: user} do
+    test "save new user in an agent", %{user: user} do
       response = CreateOrUpdateUser.call(user)
 
       expected_response = :ok
